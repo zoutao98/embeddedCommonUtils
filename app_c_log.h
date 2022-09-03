@@ -29,9 +29,11 @@ enum LOG_LEVEL {
 // log 级别
 enum LOG_LEVEL log_level = log_level_trace;
 // 是否开启log
-#define LOG_OPEN 1
+#define LOG_OPEN      1
+// 是否开启格式化输出
+#define LOG_FORMAT    0
 // 是否支持RTOS
-#define LOG_RTOS 0
+#define LOG_RTOS      0
 
 #if LOG_OPEN && LOG_RTOS
 // RTOS
@@ -52,7 +54,7 @@ enum LOG_LEVEL log_level = log_level_trace;
 #define CanonicalFile(x) strrchr(x,'/')?strrchr(x,'/')+1:x
 #endif
 
-#if LOG_OPEN
+#if LOG_OPEN && LOG_FORMAT
 
 #define tlogerror(format, ...) \
     if(log_level_error <= log_level){ \
@@ -84,6 +86,36 @@ enum LOG_LEVEL log_level = log_level_trace;
         printf("TRACE[%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
+#elif LOG_OPEN
+#define tlogerror(format, ...) \
+    if(log_level_error <= log_level){ \
+        log_rtos_mutex_acquire; \
+        printf(format"\r\n", ##__VA_ARGS__); \
+        log_rtos_mutex_release;}
+
+#define tlogwarn(format, ...) \
+    if(log_level_warn <= log_level){ \
+        log_rtos_mutex_acquire; \
+        printf(format"\r\n", ##__VA_ARGS__); \
+        log_rtos_mutex_release;}
+
+#define tloginfo(format, ...) \
+    if(log_level_info <= log_level){ \
+        log_rtos_mutex_acquire; \
+        printf(format"\r\n", ##__VA_ARGS__); \
+        log_rtos_mutex_release;}
+
+#define tlogdebug(format, ...) \
+    if(log_level_debug <= log_level){ \
+	    log_rtos_mutex_acquire; \
+	    printf(format"\r\n", ##__VA_ARGS__); \
+        log_rtos_mutex_release;}
+
+#define tlogtrace(format, ...) \
+    if(log_level_trace <= log_level){ \
+    	log_rtos_mutex_acquire; \
+    	printf(format"\r\n", ##__VA_ARGS__); \
+        log_rtos_mutex_release;}
 #else
 #define tlogerror(format, ...)
 #define tlogwarring(format, ...)
