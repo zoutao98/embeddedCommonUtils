@@ -47,9 +47,9 @@ enum LOG_LEVEL log_level = log_level_trace;
 
 
 #ifdef WIN32
-#define TrimFilePath(x) strrchr(x,'\\')?strrchr(x,'\\')+1:x
+#define CanonicalFile(x) strrchr(x,'\\')?strrchr(x,'\\')+1:x
 #else
-#define TrimFilePath(x) strrchr(x,'/')?strrchr(x,'/')+1:x
+#define CanonicalFile(x) strrchr(x,'/')?strrchr(x,'/')+1:x
 #endif
 
 #if LOG_OPEN
@@ -57,31 +57,31 @@ enum LOG_LEVEL log_level = log_level_trace;
 #define tlogerror(format, ...) \
     if(log_level_error <= log_level){ \
         log_rtos_mutex_acquire; \
-        printf("ERROR[%s:%d] - "format"\r\n", TrimFilePath(__FILE__), __LINE__, ##__VA_ARGS__); \
+        printf("ERROR[%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
 #define tlogwarn(format, ...) \
     if(log_level_warn <= log_level){ \
         log_rtos_mutex_acquire; \
-        printf("WARN [%s:%d] - "format"\r\n", TrimFilePath(__FILE__), __LINE__, ##__VA_ARGS__); \
+        printf("WARN [%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
 #define tloginfo(format, ...) \
     if(log_level_info <= log_level){ \
         log_rtos_mutex_acquire; \
-        printf("INFO [%s:%d] - "format"\r\n", TrimFilePath(__FILE__), __LINE__, ##__VA_ARGS__); \
+        printf("INFO [%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
 #define tlogdebug(format, ...) \
     if(log_level_debug <= log_level){ \
 	    log_rtos_mutex_acquire; \
-        printf("DEBUG[%s:%d] - "format"\r\n", TrimFilePath(__FILE__), __LINE__, ##__VA_ARGS__); \
+        printf("DEBUG[%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
 #define tlogtrace(format, ...) \
     if(log_level_trace <= log_level){ \
     	log_rtos_mutex_acquire; \
-        printf("TRACE[%s:%d] - "format"\r\n", TrimFilePath(__FILE__), __LINE__, ##__VA_ARGS__); \
+        printf("TRACE[%s:%d] - "format"\r\n", CanonicalFile(__FILE__), __LINE__, ##__VA_ARGS__); \
         log_rtos_mutex_release;}
 
 #else
